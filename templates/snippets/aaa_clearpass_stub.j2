@@ -1,0 +1,7 @@
+{% if clearpass_enabled %}
+! ClearPass integration placeholder
+aaa authentication port-access clearpass
+{% for server in clearpass_servers %}
+   server {{ server }}
+{% endfor %}
+{% endif %}
