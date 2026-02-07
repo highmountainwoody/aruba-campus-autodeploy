@@ -1,0 +1,13 @@
+interface lag {{ uplink.lacp_group_id }}
+   description LACP Uplink to core
+   vlan trunk native {{ mgmt_vlan_id }}
+   vlan trunk allowed all
+   no shutdown
+
+interface {{ uplink.uplink_port_1 }}
+   no shutdown
+   lag {{ uplink.lacp_group_id }}
+
+interface {{ uplink.uplink_port_2 }}
+   no shutdown
+   lag {{ uplink.lacp_group_id }}

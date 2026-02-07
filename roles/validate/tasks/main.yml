@@ -1,0 +1,3 @@
+- name: Placeholder for validation role
+  ansible.builtin.debug:
+    msg: "Run post-deployment validation commands and generate report."
