@@ -2,7 +2,7 @@
 
 These are good manual checks to confirm the automation results.
 
-Core (8100 VSX)
+Core (VSX pair)
 - show vsx status
 - show vsx brief
 - show lacp interfaces

@@ -14,7 +14,7 @@ This project automates Aruba CX campus switch configuration using an Excel workb
 ## Supported designs (v1)
 
 * **Campus**: Aruba CX campus **without** EVPN/VXLAN.
-* **Core**: Aruba CX 8100 VSX pair.
+* **Core**: Aruba CX VSX pair (model supplied in workbook).
 * **Access**: Aruba CX 6200F or 6300M stacks.
 * **STP**: MST only.
 * **VLAN policy**: all VLANs everywhere (strict, no pruning).
@@ -67,17 +67,17 @@ The Excel workbook defines the entire campus. See **`docs/excel-template-outline
 
 Workflow:
 
-1. Copy `docs/excel-template-outline.md` into a customer workbook (or create `campus_site.xlsx` following the outline).
+1. Copy `docs/excel-template-outline.md` into a customer workbook (or create a new workbook following the outline).
 2. Run validation:
 
 ```bash
-python tools/validate_workbook.py --workbook campus_site.xlsx
+python tools/validate_workbook.py --workbook <workbook>.xlsx
 ```
 
 3. Convert to inventory:
 
 ```bash
-python tools/excel_to_yaml.py --workbook campus_site.xlsx --output inventories/Lansdowne
+python tools/excel_to_yaml.py --workbook <workbook>.xlsx --output inventories/<site_name>
 ```
 
 ## Inventory structure
@@ -100,7 +100,7 @@ inventories/<site_name>/
 ### 1) Render configs (no device changes)
 
 ```bash
-ansible-playbook -i inventories/Lansdowne/hosts.yml playbooks/build_config.yml
+ansible-playbook -i inventories/<site_name>/hosts.yml playbooks/build_config.yml
 ```
 
 Outputs rendered configs to:
@@ -112,21 +112,21 @@ artifacts/<site>/<timestamp>/rendered/
 ### 2) Bootstrap API access (SSH / network_cli)
 
 ```bash
-ansible-playbook -i inventories/Lansdowne/hosts.yml playbooks/bootstrap.yml \
+ansible-playbook -i inventories/<site_name>/hosts.yml playbooks/bootstrap.yml \
   -e "automation_username=ansible" -e "automation_password=SuperSecret"
 ```
 
 ### 3) Deploy via AOS‑CX API (httpapi)
 
 ```bash
-ansible-playbook -i inventories/Lansdowne/hosts.yml playbooks/deploy.yml \
+ansible-playbook -i inventories/<site_name>/hosts.yml playbooks/deploy.yml \
   -e "automation_username=ansible" -e "automation_password=SuperSecret"
 ```
 
 ### 4) Validate and generate report
 
 ```bash
-ansible-playbook -i inventories/Lansdowne/hosts.yml playbooks/validate.yml
+ansible-playbook -i inventories/<site_name>/hosts.yml playbooks/validate.yml
 ```
 
 Outputs a markdown report to:
@@ -138,8 +138,8 @@ artifacts/<site>/<timestamp>/reports/validation_report.md
 ### 5) Rollback (restore from backup)
 
 ```bash
-ansible-playbook -i inventories/Lansdowne/hosts.yml playbooks/rollback.yml \
-  -e "backup_file=artifacts/Lansdowne/<timestamp>/backups/core-1.cfg"
+ansible-playbook -i inventories/<site_name>/hosts.yml playbooks/rollback.yml \
+  -e "backup_file=artifacts/<site>/<timestamp>/backups/core-1.cfg"
 ```
 
 ## Validation behavior
@@ -188,9 +188,8 @@ roles/
   nac_skeleton/
   validate/
 templates/
-  core_8100_vsx.j2
-  access_6200f_stack.j2
-  access_6300m_stack.j2
+  core_vsx.j2
+  access_stack.j2
   snippets/
     vlans.j2
     svis.j2

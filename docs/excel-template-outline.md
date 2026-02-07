@@ -6,11 +6,11 @@ Design assumptions (v1)
 - L2 campus (no EVPN)
 - MST only
 - All VLANs everywhere
-- Core is VSX pair (8100)
+- Core is VSX pair (model supplied in workbook)
 - Access is 6200F/6300M stacks
 - Gateway mode is site-level: CORE (SVIs on core) or FIREWALL (core mgmt SVI only)
 
-## Workbook: `campus_site.xlsx`
+## Workbook: customer-provided Excel file
 
 ## Tab: SITE
 One row only.
@@ -33,7 +33,7 @@ Columns
 - clearpass_servers (comma-separated, optional)
 
 Example
-- site_name: Lansdowne
+- site_name: ExampleCampus
 - default_gateway_mode: CORE
 - dns_servers: 10.10.10.10,10.10.10.11
 - mst_region_name: CUSTOMER-MST
@@ -45,7 +45,7 @@ One row per switch (core pair and each access stack member).
 Columns
 - device_name
 - role (core|access)
-- model (8100|6200F|6300M)
+- model (CORE|6200F|6300M)
 - mgmt_ip
 - mgmt_mask
 - mgmt_gateway

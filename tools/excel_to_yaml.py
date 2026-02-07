@@ -9,9 +9,10 @@ from openpyxl import load_workbook
 from validate_workbook import validate_workbook
 
 TEMPLATE_MAP = {
-    "8100": "core_8100_vsx.j2",
-    "6200F": "access_6200f_stack.j2",
-    "6300M": "access_6300m_stack.j2",
+    "CORE": "core_vsx.j2",
+    "8100": "core_vsx.j2",
+    "6200F": "access_stack.j2",
+    "6300M": "access_stack.j2",
 }
 
 
