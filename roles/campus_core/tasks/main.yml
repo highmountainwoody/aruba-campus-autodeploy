@@ -1,0 +1,3 @@
+- name: Placeholder for campus core configuration
+  ansible.builtin.debug:
+    msg: "Apply core VSX, VLANs, MST, and SVIs."

@@ -1,0 +1,45 @@
+- name: Validate Aruba CX campus deployment
+  hosts: all
+  gather_facts: false
+  connection: httpapi
+  vars:
+    run_id: "{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+    artifacts_root: "{{ playbook_dir }}/../artifacts/{{ site_name }}/{{ run_id }}"
+  tasks:
+    - name: Create report directory
+      ansible.builtin.file:
+        path: "{{ artifacts_root }}/reports"
+        state: directory
+        mode: "0755"
+      run_once: true
+      delegate_to: localhost
+
+    - name: Run validation commands
+      arubanetworks.aoscx.aoscx_command:
+        commands: "{{ validation_commands }}"
+      vars:
+        validation_commands: >-
+          {{ ['show interfaces brief', 'show vlan', 'show lacp interfaces',
+             'show spanning-tree mst', 'show spanning-tree mst configuration']
+             + (role == 'core') | ternary(['show vsx status', 'show vsx brief', 'show ip interface brief'], []) }}
+      register: validation_output
+
+    - name: Write validation report
+      ansible.builtin.copy:
+        dest: "{{ artifacts_root }}/reports/validation_report.md"
+        mode: "0644"
+        content: |
+          # Aruba CX Campus Validation Report
+
+          * Site: {{ site_name }}
+          * Gateway mode: {{ default_gateway_mode }}
+          * Run: {{ run_id }}
+
+          ## Device: {{ inventory_hostname }}
+          {% for cmd, output in validation_output.commands | zip(validation_output.stdout) %}
+          ### {{ cmd }}
+          ```
+          {{ output }}
+          ```
+          {% endfor %}
+      delegate_to: localhost
