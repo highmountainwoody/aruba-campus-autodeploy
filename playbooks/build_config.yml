@@ -1,0 +1,33 @@
+- name: Render Aruba CX campus configurations (no device changes)
+  hosts: all
+  gather_facts: false
+  pre_tasks:
+    - name: Set shared run identifier
+      ansible.builtin.set_fact:
+        shared_run_id: "{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+      run_once: true
+      delegate_to: localhost
+      delegate_facts: true
+  vars:
+    run_id: "{{ hostvars['localhost'].shared_run_id }}"
+    artifacts_root: "{{ playbook_dir }}/../artifacts/{{ site_name }}/{{ run_id }}"
+    template_root: "{{ playbook_dir }}/../templates"
+  tasks:
+    - name: Create artifact directories
+      ansible.builtin.file:
+        path: "{{ artifacts_root }}/{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - rendered
+        - backups
+        - reports
+      run_once: true
+      delegate_to: localhost
+
+    - name: Render device configuration
+      ansible.builtin.template:
+        src: "{{ template_root }}/{{ hostvars[inventory_hostname].template }}"
+        dest: "{{ artifacts_root }}/rendered/{{ inventory_hostname }}.cfg"
+        mode: "0644"
+      delegate_to: localhost
