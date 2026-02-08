@@ -1,0 +1,35 @@
+hostname {{ device_name }}
+
+{% include 'snippets/vlans.j2' %}
+
+vlan {{ mgmt_vlan_id }}
+   name {{ mgmt_vlan_name }}
+
+interface vlan {{ mgmt_vlan_id }}
+   ip address {{ mgmt_svi_ip }}/{{ mgmt_svi_mask }}
+
+{% include 'snippets/mst.j2' %}
+
+dhcp-snooping
+   enable
+   vlan {{ vlans | selectattr('enabled') | map(attribute='vlan_id') | join(',') }}
+
+arp-inspection
+   enable
+   vlan {{ vlans | selectattr('enabled') | map(attribute='vlan_id') | join(',') }}
+
+{% if uplink %}
+{% if design_mode == 'L3' %}
+{% include 'snippets/uplinks_l3_routed.j2' %}
+{% else %}
+{% include 'snippets/uplinks_l2_trunks.j2' %}
+{% endif %}
+{% endif %}
+
+{% include 'snippets/aaa_clearpass_stub.j2' %}
+
+{% if design_mode == 'L3' %}
+router ospf {{ ospf_process_id }}
+   router-id {{ ospf_router_id }}
+   redistribute connected
+{% endif %}
