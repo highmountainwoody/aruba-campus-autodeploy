@@ -40,6 +40,7 @@ REQUIRED_TABS = {
         "vlan_name",
         "purpose",
         "enabled",
+        "svi_ip",
         "svi_gateway_ip",
         "svi_mask",
         "dhcp_relay_ips",

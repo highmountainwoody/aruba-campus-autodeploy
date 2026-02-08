@@ -62,12 +62,13 @@ Columns
 - vlan_name
 - purpose (free text)
 - enabled (Y/N)
+- svi_ip (SVI interface IP for active-gateway)
 - svi_gateway_ip (only used when default_gateway_mode=CORE)
 - svi_mask
 - dhcp_relay_ips (comma-separated, optional)
 
 Notes
-- In FIREWALL mode, svi_gateway_ip can be left blank.
+- In FIREWALL mode, svi_ip and svi_gateway_ip can be left blank.
 - VLANs are created on all switches regardless.
 
 ## Tab: CORE_VSX

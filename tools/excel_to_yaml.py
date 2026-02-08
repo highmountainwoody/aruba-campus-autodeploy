@@ -128,6 +128,7 @@ def main() -> int:
                 "vlan_name": vlan["vlan_name"],
                 "purpose": vlan.get("purpose"),
                 "enabled": normalize_bool(vlan["enabled"]),
+                "svi_ip": normalize_str(vlan.get("svi_ip")),
                 "svi_gateway_ip": vlan.get("svi_gateway_ip"),
                 "svi_mask": vlan.get("svi_mask"),
                 "dhcp_relay_ips": split_list(vlan.get("dhcp_relay_ips")),
