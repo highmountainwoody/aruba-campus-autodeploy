@@ -1,0 +1,16 @@
+{% for uplink in access_uplinks %}
+{% if uplink.core_peer_1 and uplink.core_peer_1_port and uplink.core_peer_2 and uplink.core_peer_2_port %}
+{% if uplink.core_peer_1 == device_name %}
+interface {{ uplink.core_peer_1_port }}
+   description Uplink to {{ uplink.stack_name }}
+   no routing
+   no shutdown
+{% endif %}
+{% if uplink.core_peer_2 == device_name %}
+interface {{ uplink.core_peer_2_port }}
+   description Uplink to {{ uplink.stack_name }}
+   no routing
+   no shutdown
+{% endif %}
+{% endif %}
+{% endfor %}

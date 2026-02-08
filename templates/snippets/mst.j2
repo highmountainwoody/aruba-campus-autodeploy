@@ -1,0 +1,5 @@
+spanning-tree mode mst
+spanning-tree mst configuration
+   name {{ mst_region_name }}
+   revision {{ mst_revision }}
+   instance 0 vlan {{ vlans | selectattr('enabled') | map(attribute='vlan_id') | join(',') }}

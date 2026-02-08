@@ -1,0 +1,13 @@
+{% if default_gateway_mode == 'CORE' %}
+{% for vlan in vlans if vlan.enabled and vlan.svi_ip %}
+interface vlan {{ vlan.vlan_id }}
+   ip address {{ vlan.svi_ip }}/{{ vlan.svi_mask }}
+   active-gateway ip {{ vlan.svi_ip }}
+   active-gateway mac {{ active_gateway_mac }}
+{% if vlan.dhcp_relay_ips %}
+{% for relay in vlan.dhcp_relay_ips %}
+   ip helper-address {{ relay }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
