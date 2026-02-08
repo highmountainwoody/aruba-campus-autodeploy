@@ -1,0 +1,3 @@
+- name: Placeholder for campus services (VLANs, trunks, SVIs, MST)
+  ansible.builtin.debug:
+    msg: "Apply shared campus services configuration."
