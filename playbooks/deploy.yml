@@ -2,8 +2,15 @@
   hosts: all
   gather_facts: false
   connection: httpapi
+  pre_tasks:
+    - name: Set shared run identifier
+      ansible.builtin.set_fact:
+        shared_run_id: "{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+      run_once: true
+      delegate_to: localhost
+      delegate_facts: true
   vars:
-    run_id: "{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+    run_id: "{{ hostvars['localhost'].shared_run_id }}"
     artifacts_root: "{{ playbook_dir }}/../artifacts/{{ site_name }}/{{ run_id }}"
     template_root: "{{ playbook_dir }}/../templates"
   tasks:

@@ -109,6 +109,8 @@ Outputs rendered configs to:
 artifacts/<site>/<timestamp>/rendered/
 ```
 
+> Render-only builds run locally and do **not** require switch reachability.
+
 ### 2) Bootstrap API access (SSH / network_cli)
 
 ```bash
