@@ -31,12 +31,16 @@ interface lag 256
 interface {{ core_vsx.isl_port_1 }}
    description VSX ISL Member
    no routing
+   vlan trunk native {{ mgmt_vlan_id }}
+   vlan trunk allowed all
    no shutdown
    lag 256
 
 interface {{ core_vsx.isl_port_2 }}
    description VSX ISL Member
    no routing
+   vlan trunk native {{ mgmt_vlan_id }}
+   vlan trunk allowed all
    no shutdown
    lag 256
 
