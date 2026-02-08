@@ -1,0 +1,15 @@
+- name: Rollback Aruba CX campus configuration
+  hosts: all
+  gather_facts: false
+  connection: httpapi
+  vars:
+    backup_file: ""
+  tasks:
+    - name: Ensure backup file provided
+      ansible.builtin.fail:
+        msg: "Provide backup_file pointing to an artifacts backup file."
+      when: backup_file | length == 0
+
+    - name: Push backup configuration
+      arubanetworks.aoscx.aoscx_config:
+        src: "{{ backup_file }}"
