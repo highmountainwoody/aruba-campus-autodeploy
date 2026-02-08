@@ -1,0 +1,3 @@
+- name: Placeholder for NAC skeleton (ClearPass)
+  ansible.builtin.debug:
+    msg: "Apply optional ClearPass hooks when enabled."
