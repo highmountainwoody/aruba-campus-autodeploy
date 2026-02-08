@@ -1,0 +1,18 @@
+{% for uplink in access_uplinks %}
+{% if uplink.core_peer_1 == device_name %}
+interface {{ uplink.core_peer_1_port }}
+   description L3 Uplink to {{ uplink.stack_name }}
+   ip address {{ uplink.core_peer_1_ip }}
+   ip ospf {{ ospf_process_id }} area 0
+   ip ospf network point-to-point
+   no shutdown
+{% endif %}
+{% if uplink.core_peer_2 == device_name %}
+interface {{ uplink.core_peer_2_port }}
+   description L3 Uplink to {{ uplink.stack_name }}
+   ip address {{ uplink.core_peer_2_ip }}
+   ip ospf {{ ospf_process_id }} area 0
+   ip ospf network point-to-point
+   no shutdown
+{% endif %}
+{% endfor %}

@@ -28,7 +28,8 @@
         validation_commands: >-
           {{ ['show interfaces brief', 'show vlan', 'show lacp interfaces',
              'show spanning-tree mst', 'show spanning-tree mst configuration']
-             + (role == 'core') | ternary(['show vsx status', 'show vsx brief', 'show ip interface brief'], []) }}
+             + (role == 'core') | ternary(['show vsx status', 'show vsx brief', 'show ip interface brief'], [])
+             + (design_mode == 'L3') | ternary(['show ip ospf neighbor', 'show ip route ospf'], []) }}
       register: validation_output
 
     - name: Write validation report

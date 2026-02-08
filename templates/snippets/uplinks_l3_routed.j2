@@ -1,0 +1,13 @@
+interface {{ uplink.uplink_port_1 }}
+   description L3 Uplink to {{ uplink.core_peer_1 }}
+   ip address {{ uplink.access_peer_1_ip }}
+   ip ospf {{ ospf_process_id }} area 0
+   ip ospf network point-to-point
+   no shutdown
+
+interface {{ uplink.uplink_port_2 }}
+   description L3 Uplink to {{ uplink.core_peer_2 }}
+   ip address {{ uplink.access_peer_2_ip }}
+   ip ospf {{ ospf_process_id }} area 0
+   ip ospf network point-to-point
+   no shutdown

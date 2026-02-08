@@ -25,23 +25,49 @@ interface lag 256
    description VSX ISL
    no routing
    vlan trunk native {{ mgmt_vlan_id }}
+{% if design_mode == 'L3' %}
+   vlan trunk allowed {{ mgmt_vlan_id }}
+{% else %}
    vlan trunk allowed all
+{% endif %}
    no shutdown
 
 interface {{ core_vsx.isl_port_1 }}
    description VSX ISL Member
    no routing
+   vlan trunk native {{ mgmt_vlan_id }}
+{% if design_mode == 'L3' %}
+   vlan trunk allowed {{ mgmt_vlan_id }}
+{% else %}
+   vlan trunk allowed all
+{% endif %}
    no shutdown
    lag 256
 
 interface {{ core_vsx.isl_port_2 }}
    description VSX ISL Member
    no routing
+   vlan trunk native {{ mgmt_vlan_id }}
+{% if design_mode == 'L3' %}
+   vlan trunk allowed {{ mgmt_vlan_id }}
+{% else %}
+   vlan trunk allowed all
+{% endif %}
    no shutdown
    lag 256
 
 {% include 'snippets/svis.j2' %}
 
+{% if design_mode == 'L3' %}
+{% include 'snippets/core_access_downlinks_l3.j2' %}
+{% else %}
 {% include 'snippets/core_access_downlinks.j2' %}
+{% endif %}
 
 {% include 'snippets/aaa_clearpass_stub.j2' %}
+
+{% if design_mode == 'L3' %}
+router ospf {{ ospf_process_id }}
+   router-id {{ ospf_router_id }}
+   redistribute connected
+{% endif %}

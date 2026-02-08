@@ -18,7 +18,7 @@ One row only.
 Columns
 - site_name
 - timezone
-- design_mode (use `L2` in v1)
+- design_mode (use `L2` or `L3`)
 - default_gateway_mode (CORE or FIREWALL)
 - dns_servers (comma-separated)
 - ntp_servers (comma-separated)
@@ -88,8 +88,12 @@ Columns
 - lacp_group_id
 - core_peer_1
 - core_peer_1_port
+- core_peer_1_ip (/31)
+- access_peer_1_ip (/31)
 - core_peer_2
 - core_peer_2_port
+- core_peer_2_ip (/31)
+- access_peer_2_ip (/31)
 
 ## Optional Tab: INTERFACE_DESCRIPTIONS
 Columns

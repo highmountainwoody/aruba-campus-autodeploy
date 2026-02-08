@@ -19,7 +19,17 @@ arp-inspection
    vlan {{ vlans | selectattr('enabled') | map(attribute='vlan_id') | join(',') }}
 
 {% if uplink %}
+{% if design_mode == 'L3' %}
+{% include 'snippets/uplinks_l3_routed.j2' %}
+{% else %}
 {% include 'snippets/uplinks_l2_trunks.j2' %}
+{% endif %}
 {% endif %}
 
 {% include 'snippets/aaa_clearpass_stub.j2' %}
+
+{% if design_mode == 'L3' %}
+router ospf {{ ospf_process_id }}
+   router-id {{ ospf_router_id }}
+   redistribute connected
+{% endif %}

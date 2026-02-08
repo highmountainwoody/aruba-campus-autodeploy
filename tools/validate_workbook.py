@@ -52,8 +52,12 @@ REQUIRED_TABS = {
         "lacp_group_id",
         "core_peer_1",
         "core_peer_1_port",
+        "core_peer_1_ip",
+        "access_peer_1_ip",
         "core_peer_2",
         "core_peer_2_port",
+        "core_peer_2_ip",
+        "access_peer_2_ip",
     ],
 }
 

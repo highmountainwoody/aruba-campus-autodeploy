@@ -107,6 +107,7 @@ def main() -> int:
         "design_mode": normalize_str(site["design_mode"]),
         "default_gateway_mode": normalize_str(site["default_gateway_mode"]),
         "active_gateway_mac": "12:02:00:00:A0:01",
+        "ospf_process_id": 1,
         "dns_servers": split_list(site["dns_servers"]),
         "ntp_servers": split_list(site["ntp_servers"]),
         "syslog_servers": split_list(site.get("syslog_servers")),
@@ -204,6 +205,7 @@ def main() -> int:
             "mgmt_ip": normalize_str(device["mgmt_ip"]),
             "mgmt_mask": normalize_str(device["mgmt_mask"]),
             "mgmt_gateway": normalize_str(device["mgmt_gateway"]),
+            "ospf_router_id": normalize_str(device["mgmt_ip"]),
             "template": TEMPLATE_MAP.get(model, ""),
             "interface_descriptions": interface_desc_map.get(device_name, []),
         }

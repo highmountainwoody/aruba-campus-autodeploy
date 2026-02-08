@@ -22,6 +22,34 @@ This project automates Aruba CX campus switch configuration using an Excel workb
   * **CORE** (default): core provides SVIs for VLANs defined in workbook.
   * **FIREWALL**: core only has management SVI; no user SVIs.
 
+## L2 mode vs L3 mode (v2)
+
+The project supports two campus modes. You select the mode in the workbook with a **site‑level flag** (for example, `design_mode = L2` or `design_mode = L3`).
+
+### L2 mode (default)
+
+* L2 trunks from access to core.
+* SVIs live on the core VSX pair (active‑gateway).
+* VLANs are created everywhere (core and access).
+* STP/MST is the control plane between core and access.
+
+### L3 mode (v2)
+
+* Routed L3 links between core and access (OSPF Area 0, p2p).
+* Access switches **run OSPF** and advertise connected VLANs.
+* SVIs remain on the core VSX pair (active‑gateway); access only has the management SVI.
+* Management VLAN remains L2 for out‑of‑band reachability; user VLANs are routed.
+* ISLs carry **only** the management VLAN in L3 mode.
+
+### How to use the mode switch
+
+1. Set the site‑level flag in the workbook (e.g., `design_mode = L2` or `design_mode = L3`).
+2. Provide the additional L3 link addressing fields required for L3 mode (e.g., /31 point‑to‑point links).
+3. Run the normal workflow (`excel_to_yaml.py` → `build_config.yml`/`deploy.yml`).
+
+> If the design mode is **L2**, the playbooks render L2 trunk snippets.  
+> If the design mode is **L3**, the playbooks render L3 routed link + OSPF snippets.
+
 ### Non‑goals for v1
 
 * EVPN/VXLAN campus
