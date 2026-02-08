@@ -138,6 +138,7 @@ def main() -> int:
 
     group_vars = site_vars.copy()
     group_vars["vlans"] = vlan_entries
+    group_vars["access_uplinks"] = access_uplinks
     write_yaml(output_root / "group_vars" / "all.yml", group_vars)
 
     interface_desc_map: Dict[str, List[Dict[str, Any]]] = {}
