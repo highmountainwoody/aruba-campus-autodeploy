@@ -1,0 +1,23 @@
+hostname {{ device_name }}
+
+{% include 'snippets/vlans.j2' %}
+
+vlan {{ mgmt_vlan_id }}
+   name {{ mgmt_vlan_name }}
+
+interface vlan {{ mgmt_vlan_id }}
+   ip address {{ mgmt_svi_ip }}/{{ mgmt_svi_mask }}
+
+{% include 'snippets/mst.j2' %}
+
+{% if vsx_pair_id %}
+vsx
+   role {{ vsx_role }}
+   isl port {{ core_vsx.isl_port_1 }}
+   isl port {{ core_vsx.isl_port_2 }}
+{% endif %}
+
+{% include 'snippets/svis.j2' %}
+
+{% include 'snippets/aaa_clearpass_stub.j2' %}
+
