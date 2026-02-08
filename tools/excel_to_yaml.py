@@ -106,6 +106,7 @@ def main() -> int:
         "timezone": normalize_str(site["timezone"]),
         "design_mode": normalize_str(site["design_mode"]),
         "default_gateway_mode": normalize_str(site["default_gateway_mode"]),
+        "active_gateway_mac": "12:02:00:00:A0:01",
         "dns_servers": split_list(site["dns_servers"]),
         "ntp_servers": split_list(site["ntp_servers"]),
         "syslog_servers": split_list(site.get("syslog_servers")),
@@ -127,7 +128,7 @@ def main() -> int:
                 "vlan_name": vlan["vlan_name"],
                 "purpose": vlan.get("purpose"),
                 "enabled": normalize_bool(vlan["enabled"]),
-                "svi_gateway_ip": vlan.get("svi_gateway_ip"),
+                "svi_ip": normalize_str(vlan.get("svi_ip")),
                 "svi_mask": vlan.get("svi_mask"),
                 "dhcp_relay_ips": split_list(vlan.get("dhcp_relay_ips")),
             }

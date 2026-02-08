@@ -62,12 +62,12 @@ Columns
 - vlan_name
 - purpose (free text)
 - enabled (Y/N)
-- svi_gateway_ip (only used when default_gateway_mode=CORE)
+- svi_ip (SVI interface IP for active-gateway)
 - svi_mask
 - dhcp_relay_ips (comma-separated, optional)
 
 Notes
-- In FIREWALL mode, svi_gateway_ip can be left blank.
+- In FIREWALL mode, svi_ip can be left blank.
 - VLANs are created on all switches regardless.
 
 ## Tab: CORE_VSX
@@ -103,5 +103,5 @@ Used to override/standardize interface descriptions per customer.
 - All enabled VLANs are deployed everywhere.
 - Uplink trunks allow all enabled VLANs.
 - MST config must match across all switches.
-- CORE gateway mode: SVIs created on core for VLANs that specify svi_gateway_ip.
+- CORE gateway mode: SVIs created on core for VLANs that specify svi_ip.
 - FIREWALL gateway mode: core has ONLY mgmt SVI; no user SVIs.

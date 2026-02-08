@@ -7,6 +7,8 @@ vlan {{ mgmt_vlan_id }}
 
 interface vlan {{ mgmt_vlan_id }}
    ip address {{ mgmt_svi_ip }}/{{ mgmt_svi_mask }}
+   active-gateway ip {{ mgmt_svi_ip }}
+   active-gateway mac {{ active_gateway_mac }}
 
 {% include 'snippets/mst.j2' %}
 
@@ -16,23 +18,27 @@ vsx
 {% if vsx_keepalive_peer_ip %}
    keepalive peer {{ vsx_keepalive_peer_ip }} source {{ vsx_keepalive_source_ip }} vrf {{ vsx_keepalive_vrf }}
 {% endif %}
-   isl port {{ core_vsx.isl_port_1 }}
-   isl port {{ core_vsx.isl_port_2 }}
+   isl lag 256
 {% endif %}
 
-interface {{ core_vsx.isl_port_1 }}
+interface lag 256
    description VSX ISL
    no routing
    vlan trunk native {{ mgmt_vlan_id }}
    vlan trunk allowed all
    no shutdown
 
-interface {{ core_vsx.isl_port_2 }}
-   description VSX ISL
+interface {{ core_vsx.isl_port_1 }}
+   description VSX ISL Member
    no routing
-   vlan trunk native {{ mgmt_vlan_id }}
-   vlan trunk allowed all
    no shutdown
+   lag 256
+
+interface {{ core_vsx.isl_port_2 }}
+   description VSX ISL Member
+   no routing
+   no shutdown
+   lag 256
 
 {% include 'snippets/svis.j2' %}
 
