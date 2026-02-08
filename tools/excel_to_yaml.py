@@ -181,6 +181,17 @@ def main() -> int:
             }
         )
 
+    core_peers: Dict[str, Dict[str, str]] = {}
+    for device in devices:
+        if normalize_str(device["role"]).lower() != "core":
+            continue
+        pair_id = normalize_str(device.get("vsx_pair_id"))
+        if not pair_id:
+            continue
+        core_peers.setdefault(pair_id, {})[normalize_str(device["device_name"])] = normalize_str(
+            device.get("mgmt_ip")
+        )
+
     for device in devices:
         device_name = normalize_str(device["device_name"])
         role = normalize_str(device["role"]).lower()
@@ -197,11 +208,21 @@ def main() -> int:
         }
 
         if role == "core":
+            pair_id = normalize_str(device.get("vsx_pair_id"))
+            peer_candidates = {
+                name: ip
+                for name, ip in core_peers.get(pair_id, {}).items()
+                if name != device_name
+            }
+            peer_ip = next(iter(peer_candidates.values()), "")
             host_vars.update(
                 {
-                    "vsx_pair_id": normalize_str(device.get("vsx_pair_id")),
+                    "vsx_pair_id": pair_id,
                     "vsx_role": normalize_str(device.get("vsx_role")),
-                    "core_vsx": core_vsx.get(normalize_str(device.get("vsx_pair_id")), {}),
+                    "core_vsx": core_vsx.get(pair_id, {}),
+                    "vsx_keepalive_source_ip": normalize_str(device.get("mgmt_ip")),
+                    "vsx_keepalive_peer_ip": peer_ip,
+                    "vsx_keepalive_vrf": "mgmt",
                 }
             )
         else:

@@ -10,6 +10,14 @@ interface vlan {{ mgmt_vlan_id }}
 
 {% include 'snippets/mst.j2' %}
 
+dhcp-snooping
+   enable
+   vlan {{ vlans | selectattr('enabled') | map(attribute='vlan_id') | join(',') }}
+
+arp-inspection
+   enable
+   vlan {{ vlans | selectattr('enabled') | map(attribute='vlan_id') | join(',') }}
+
 {% if uplink %}
 {% include 'snippets/uplinks_l2_trunks.j2' %}
 {% endif %}
