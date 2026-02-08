@@ -45,6 +45,12 @@ def normalize_bool(value: Any) -> bool:
     return bool(value)
 
 
+def normalize_str(value: Any) -> str:
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
 def write_yaml(path: Path, data: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
@@ -96,19 +102,19 @@ def main() -> int:
     )
 
     site_vars = {
-        "site_name": site["site_name"],
-        "timezone": site["timezone"],
-        "design_mode": site["design_mode"],
-        "default_gateway_mode": site["default_gateway_mode"],
+        "site_name": normalize_str(site["site_name"]),
+        "timezone": normalize_str(site["timezone"]),
+        "design_mode": normalize_str(site["design_mode"]),
+        "default_gateway_mode": normalize_str(site["default_gateway_mode"]),
         "dns_servers": split_list(site["dns_servers"]),
         "ntp_servers": split_list(site["ntp_servers"]),
         "syslog_servers": split_list(site.get("syslog_servers")),
-        "mst_region_name": site["mst_region_name"],
+        "mst_region_name": normalize_str(site["mst_region_name"]),
         "mst_revision": int(site["mst_revision"]),
         "mgmt_vlan_id": int(site["mgmt_vlan_id"]),
-        "mgmt_vlan_name": site["mgmt_vlan_name"],
-        "mgmt_svi_ip": site["mgmt_svi_ip"],
-        "mgmt_svi_mask": site["mgmt_svi_mask"],
+        "mgmt_vlan_name": normalize_str(site["mgmt_vlan_name"]),
+        "mgmt_svi_ip": normalize_str(site["mgmt_svi_ip"]),
+        "mgmt_svi_mask": normalize_str(site["mgmt_svi_mask"]),
         "clearpass_enabled": normalize_bool(site["clearpass_enabled"]),
         "clearpass_servers": split_list(site.get("clearpass_servers")),
     }
@@ -133,6 +139,12 @@ def main() -> int:
     output_root = args.output
     output_root.mkdir(parents=True, exist_ok=True)
 
+    device_names = [normalize_str(device["device_name"]) for device in devices]
+    duplicates = {name for name in device_names if device_names.count(name) > 1}
+    if duplicates:
+        print(f"Duplicate device_name entries found: {', '.join(sorted(duplicates))}")
+        return 1
+
     inventory = build_inventory(site_vars, devices)
     write_yaml(output_root / "hosts.yml", inventory)
 
@@ -141,44 +153,67 @@ def main() -> int:
     group_vars["access_uplinks"] = access_uplinks
     write_yaml(output_root / "group_vars" / "all.yml", group_vars)
 
+    core_devices = [
+        normalize_str(device["device_name"])
+        for device in devices
+        if normalize_str(device["role"]).lower() == "core"
+    ]
+    access_devices = [
+        normalize_str(device["device_name"])
+        for device in devices
+        if normalize_str(device["role"]).lower() == "access"
+    ]
+    write_yaml(
+        output_root / "group_vars" / "core.yml",
+        {"role": "core", "device_names": core_devices},
+    )
+    write_yaml(
+        output_root / "group_vars" / "access.yml",
+        {"role": "access", "device_names": access_devices},
+    )
+
     interface_desc_map: Dict[str, List[Dict[str, Any]]] = {}
     for item in interface_desc:
-        interface_desc_map.setdefault(item["device_name"], []).append(
-            {"interface": item["interface"], "description": item["description"]}
+        interface_desc_map.setdefault(normalize_str(item["device_name"]), []).append(
+            {
+                "interface": normalize_str(item["interface"]),
+                "description": normalize_str(item["description"]),
+            }
         )
 
     for device in devices:
-        role = device["role"].lower()
-        model = device["model"]
+        device_name = normalize_str(device["device_name"])
+        role = normalize_str(device["role"]).lower()
+        model = normalize_str(device["model"])
         host_vars: Dict[str, Any] = {
-            "device_name": device["device_name"],
+            "device_name": device_name,
             "role": role,
             "model": model,
-            "mgmt_ip": device["mgmt_ip"],
-            "mgmt_mask": device["mgmt_mask"],
-            "mgmt_gateway": device["mgmt_gateway"],
+            "mgmt_ip": normalize_str(device["mgmt_ip"]),
+            "mgmt_mask": normalize_str(device["mgmt_mask"]),
+            "mgmt_gateway": normalize_str(device["mgmt_gateway"]),
             "template": TEMPLATE_MAP.get(model, ""),
-            "interface_descriptions": interface_desc_map.get(device["device_name"], []),
+            "interface_descriptions": interface_desc_map.get(device_name, []),
         }
 
         if role == "core":
             host_vars.update(
                 {
-                    "vsx_pair_id": device.get("vsx_pair_id"),
-                    "vsx_role": device.get("vsx_role"),
-                    "core_vsx": core_vsx.get(device.get("vsx_pair_id"), {}),
+                    "vsx_pair_id": normalize_str(device.get("vsx_pair_id")),
+                    "vsx_role": normalize_str(device.get("vsx_role")),
+                    "core_vsx": core_vsx.get(normalize_str(device.get("vsx_pair_id")), {}),
                 }
             )
         else:
             host_vars.update(
                 {
-                    "stack_name": device.get("stack_name"),
+                    "stack_name": normalize_str(device.get("stack_name")),
                     "stack_member_id": device.get("stack_member_id"),
-                    "uplink": uplink_map.get(device.get("stack_name"), {}),
+                    "uplink": uplink_map.get(normalize_str(device.get("stack_name")), {}),
                 }
             )
 
-        write_yaml(output_root / "host_vars" / f"{device['device_name']}.yml", host_vars)
+        write_yaml(output_root / "host_vars" / f"{device_name}.yml", host_vars)
 
     print(f"Inventory written to {output_root}")
     return 0

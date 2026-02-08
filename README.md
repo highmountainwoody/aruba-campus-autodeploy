@@ -89,6 +89,8 @@ inventories/<site_name>/
   hosts.yml
   group_vars/
     all.yml
+    core.yml
+    access.yml
   host_vars/
     <device_name>.yml
 ```
