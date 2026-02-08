@@ -1,0 +1,3 @@
+- name: Placeholder for common system tasks
+  ansible.builtin.debug:
+    msg: "Apply common system configuration (timezone, DNS, NTP, syslog)."

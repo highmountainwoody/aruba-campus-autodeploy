@@ -1,0 +1,14 @@
+- name: Bootstrap Aruba CX API access (SSH)
+  hosts: all
+  gather_facts: false
+  connection: network_cli
+  vars:
+    automation_username: ansible
+    automation_password: changeme
+    api_vrf: mgmt
+  tasks:
+    - name: Enable API and create automation user
+      ansible.netcommon.cli_config:
+        config: |
+          https-server vrf {{ api_vrf }}
+          user {{ automation_username }} group administrators password plaintext {{ automation_password }}
